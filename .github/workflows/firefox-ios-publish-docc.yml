@@ -6,6 +6,7 @@ on:
       - main
     paths: # Only runs on changes to BrowserKit files
       - BrowserKit/Sources/ComponentLibrary/**
+      - .github/workflows/firefox-ios-publish-docc.yml
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
