@@ -18,11 +18,11 @@ concurrency:
   cancel-in-progress: true # Allow just the most recent deployment
 
 jobs:
-  deploy:
+  docs:
     runs-on: macos-15
     strategy:
       matrix:
-        xcode: ["16.4"]
+        xcode: ["26.0"]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
