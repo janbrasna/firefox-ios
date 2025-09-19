@@ -1,4 +1,5 @@
 name: Create a PR to build the app using newest a-s version available
+
 on:
   schedule:
     - cron: '0 15 * * *'
@@ -8,21 +9,21 @@ on:
         description: 'Branch used as target for automation'
         required: true
         default: 'main'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
       matrix:
-        python-version: [3.10.16]
+        python-version: ["3.11"]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         persist-credentials: false
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
 
