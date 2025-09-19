@@ -1,11 +1,8 @@
 name: Fetch Remote Settings
-
 # Remote settings are updated every Tuesday and Thursday
-
 on:
   schedule:
-    - cron: '0 0 * * 2' # Every Tuesday at midnight
-    - cron: '0 0 * * 4' # Every Thursday at midnight
+    - cron: '0 0 * * 2,4' # Every Tuesday and Thursday at midnight UTC
   workflow_dispatch: # Allows manual triggering of the workflow
 
 env:
@@ -15,11 +12,10 @@ jobs:
   fetch-remote-settings:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
       matrix:
-        python-version: [3.10.16]
+        python-version: ["3.11"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -29,7 +25,7 @@ jobs:
           echo "github_action_name=$github_action_name" >> $GITHUB_ENV
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
