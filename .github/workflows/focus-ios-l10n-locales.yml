@@ -22,7 +22,7 @@ jobs:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
-          repository: mozilla-mobile/firefox-ios
+          #repository: mozilla-mobile/firefox-ios
           ref: ${{ inputs.branch }}
       - name: Setup Xcode
         run: |
