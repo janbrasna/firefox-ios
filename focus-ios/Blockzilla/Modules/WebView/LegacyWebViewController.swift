@@ -163,7 +163,7 @@ class LegacyWebViewController: UIViewController, LegacyWebController {
         if UIDevice.current.userInterfaceIdiom == .pad {
             configuration.applicationNameForUserAgent = "Version/18.6 Safari/605.1.15"
         } else {
-            configuration.applicationNameForUserAgent = "FxiOS/\(AppInfo.majorVersion) Mobile/15E148 Version/18.6"
+            configuration.applicationNameForUserAgent = "FxiOS/\(AppInfo.majorVersion).0 Mobile/15E148 Safari/604.1"
         }
 
         if #available(iOS 15.0, *) {
