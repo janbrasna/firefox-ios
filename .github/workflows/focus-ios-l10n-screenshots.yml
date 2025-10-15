@@ -33,7 +33,7 @@ jobs:
           group3=`tr '\n' ' ' < locales-ac`
           echo "group1=ar bg cs" >> $GITHUB_OUTPUT
           echo "group2=cy de en-GB" >> $GITHUB_OUTPUT
-          echo "group3=fi hu ru" >> $GITHUB_OUTPUT
+          echo "group3=fi nn nn-NO" >> $GITHUB_OUTPUT
   
   compile:
     name: Compile Focus for L10n
