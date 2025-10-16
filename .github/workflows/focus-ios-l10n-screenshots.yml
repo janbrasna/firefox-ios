@@ -24,9 +24,7 @@ jobs:
       group7: ${{ steps.my_locales.outputs.group7 }}
       group8: ${{ steps.my_locales.outputs.group8 }}
       group9: ${{ steps.my_locales.outputs.group9 }}
-      group0: ${{ steps.my_locales.outputs.group0 }}
-      groupA: ${{ steps.my_locales.outputs.groupA }}
-      groupB: ${{ steps.my_locales.outputs.groupB }}
+      groupX: ${{ steps.my_locales.outputs.groupX }}
     steps:
       - name: Clone firefoxios-l10n repo
         uses: actions/checkout@v4
@@ -36,7 +34,7 @@ jobs:
         id: my_locales
         run: |
           ls | grep -e "^..$" -e "^..-..$" > locales.txt
-          split -n 12 locales.txt locales-
+          split -n l/10 locales.txt locales-
           group1=`tr '\n' ' ' < locales-aa`
           group2=`tr '\n' ' ' < locales-ab`
           group3=`tr '\n' ' ' < locales-ac`
@@ -46,9 +44,7 @@ jobs:
           group7=`tr '\n' ' ' < locales-ag`
           group8=`tr '\n' ' ' < locales-ah`
           group9=`tr '\n' ' ' < locales-ai`
-          group0=`tr '\n' ' ' < locales-aj`
-          groupA=`tr '\n' ' ' < locales-ak`
-          groupB=`tr '\n' ' ' < locales-al`
+          groupX=`tr '\n' ' ' < locales-aj`
           echo "group1=$group1" >> $GITHUB_OUTPUT
           echo "group2=$group2" >> $GITHUB_OUTPUT
           echo "group3=$group3" >> $GITHUB_OUTPUT
@@ -58,9 +54,7 @@ jobs:
           echo "group7=$group7" >> $GITHUB_OUTPUT
           echo "group8=$group8" >> $GITHUB_OUTPUT
           echo "group9=$group9" >> $GITHUB_OUTPUT
-          echo "group0=$group0" >> $GITHUB_OUTPUT
-          echo "groupA=$groupA" >> $GITHUB_OUTPUT
-          echo "groupB=$groupB" >> $GITHUB_OUTPUT
+          echo "groupX=$groupX" >> $GITHUB_OUTPUT
 
   compile:
     name: Compile Focus for L10n
@@ -102,7 +96,7 @@ jobs:
     needs: [determine-locales, compile]
     strategy:
       fail-fast: false
-      #max-parallel: 4
+      max-parallel: 5
       matrix:
         locales: [ 
           "${{ needs.determine-locales.outputs.group1 }}", 
@@ -114,9 +108,7 @@ jobs:
           "${{ needs.determine-locales.outputs.group7 }}", 
           "${{ needs.determine-locales.outputs.group8 }}",
           "${{ needs.determine-locales.outputs.group9 }}", 
-          "${{ needs.determine-locales.outputs.group0 }}",
-          "${{ needs.determine-locales.outputs.groupA }}", 
-          "${{ needs.determine-locales.outputs.groupB }}"]  
+          "${{ needs.determine-locales.outputs.groupX }}"]  
     uses: ./.github/workflows/focus-ios-l10n-locales.yml
     with:
       locales: "${{ matrix.locales }}"
