@@ -34,7 +34,7 @@ jobs:
         id: my_locales
         run: |
           ls | grep -e "^..$" -e "^..-..$" > locales.txt
-          split -n l/10 locales.txt locales-
+          split -l $(( $(wc -l < locales.txt) / 10 + 1 )) locales.txt locales-
           group1=`tr '\n' ' ' < locales-aa`
           group2=`tr '\n' ' ' < locales-ab`
           group3=`tr '\n' ' ' < locales-ac`
