@@ -18,6 +18,15 @@ jobs:
       group1: ${{ steps.my_locales.outputs.group1 }}
       group2: ${{ steps.my_locales.outputs.group2 }}
       group3: ${{ steps.my_locales.outputs.group3 }}
+      group4: ${{ steps.my_locales.outputs.group4 }}
+      group5: ${{ steps.my_locales.outputs.group5 }}
+      group6: ${{ steps.my_locales.outputs.group6 }}
+      group7: ${{ steps.my_locales.outputs.group7 }}
+      group8: ${{ steps.my_locales.outputs.group8 }}
+      group9: ${{ steps.my_locales.outputs.group9 }}
+      group0: ${{ steps.my_locales.outputs.group0 }}
+      groupA: ${{ steps.my_locales.outputs.groupA }}
+      groupB: ${{ steps.my_locales.outputs.groupB }}
     steps:
       - name: Clone firefoxios-l10n repo
         uses: actions/checkout@v4
@@ -27,14 +36,32 @@ jobs:
         id: my_locales
         run: |
           ls | grep -e "^..$" -e "^..-..$" > locales.txt
-          split -n 3 locales.txt locales-
+          split -n 12 locales.txt locales-
           group1=`tr '\n' ' ' < locales-aa`
           group2=`tr '\n' ' ' < locales-ab`
           group3=`tr '\n' ' ' < locales-ac`
-          echo "group1=ar bg cs" >> $GITHUB_OUTPUT
-          echo "group2=cy de en-GB" >> $GITHUB_OUTPUT
-          echo "group3=fi nn nn-NO" >> $GITHUB_OUTPUT
-  
+          group4=`tr '\n' ' ' < locales-ad`
+          group5=`tr '\n' ' ' < locales-ae`
+          group6=`tr '\n' ' ' < locales-af`
+          group7=`tr '\n' ' ' < locales-ag`
+          group8=`tr '\n' ' ' < locales-ah`
+          group9=`tr '\n' ' ' < locales-ai`
+          group0=`tr '\n' ' ' < locales-aj`
+          groupA=`tr '\n' ' ' < locales-ak`
+          groupB=`tr '\n' ' ' < locales-al`
+          echo "group1=$group1" >> $GITHUB_OUTPUT
+          echo "group2=$group2" >> $GITHUB_OUTPUT
+          echo "group3=$group3" >> $GITHUB_OUTPUT
+          echo "group4=$group4" >> $GITHUB_OUTPUT
+          echo "group5=$group5" >> $GITHUB_OUTPUT
+          echo "group6=$group6" >> $GITHUB_OUTPUT
+          echo "group7=$group7" >> $GITHUB_OUTPUT
+          echo "group8=$group8" >> $GITHUB_OUTPUT
+          echo "group9=$group9" >> $GITHUB_OUTPUT
+          echo "group0=$group0" >> $GITHUB_OUTPUT
+          echo "groupA=$groupA" >> $GITHUB_OUTPUT
+          echo "groupB=$groupB" >> $GITHUB_OUTPUT
+
   compile:
     name: Compile Focus for L10n
     runs-on: macos-26
@@ -75,12 +102,21 @@ jobs:
     needs: [determine-locales, compile]
     strategy:
       fail-fast: false
-      max-parallel: 1
+      #max-parallel: 4
       matrix:
         locales: [ 
           "${{ needs.determine-locales.outputs.group1 }}", 
           "${{ needs.determine-locales.outputs.group2 }}",
-          "${{ needs.determine-locales.outputs.group3 }}"]  
+          "${{ needs.determine-locales.outputs.group3 }}", 
+          "${{ needs.determine-locales.outputs.group4 }}",
+          "${{ needs.determine-locales.outputs.group5 }}", 
+          "${{ needs.determine-locales.outputs.group6 }}",
+          "${{ needs.determine-locales.outputs.group7 }}", 
+          "${{ needs.determine-locales.outputs.group8 }}",
+          "${{ needs.determine-locales.outputs.group9 }}", 
+          "${{ needs.determine-locales.outputs.group0 }}",
+          "${{ needs.determine-locales.outputs.groupA }}", 
+          "${{ needs.determine-locales.outputs.groupB }}"]  
     uses: ./.github/workflows/focus-ios-l10n-locales.yml
     with:
       locales: "${{ matrix.locales }}"
