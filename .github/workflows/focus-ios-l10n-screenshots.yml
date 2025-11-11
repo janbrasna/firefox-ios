@@ -1,14 +1,7 @@
 name: L10n Focus iOS screenshots
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: "Branch from firefox-ios repo"
-        required: false
-        type: string
-        default: "main"
-  schedule:
-    - cron: "0 22 * * 6"
+  push:
+    branches: [test]
 
 jobs:
   determine-locales:
@@ -38,7 +31,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mozilla-mobile/firefox-ios
-          ref: ${{ inputs.branch }}
       - name: Setup Xcode
         run: |
           sudo rm -rf /Applications/Xcode.app
