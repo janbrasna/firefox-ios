@@ -1,4 +1,4 @@
-name: Update URIs and Create PR
+name: Update URI Schemes and Create PR
 on:
   schedule:
     - cron: '0 0 1 * *' # Runs at 00:00 on the first day of every month
@@ -10,7 +10,7 @@ on:
         default: 'main'
 jobs:
   build:
-    runs-on: ubuntu-latest # using ubuntu as a lightweight environment
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
       with:
@@ -33,7 +33,6 @@ jobs:
       run: python test-fixtures/ci/uri_update.py
 
     - name: Check for changes
-      id: git-check
       run: |
         if git diff --quiet; then
           echo "No changes detected, skipping PR creation."
@@ -51,7 +50,6 @@ jobs:
         fi
 
     - name: Determine PR Version Number
-      id: versioning
       run: |
         # This step is used to determine the next version number for the PR title
         # The output includes debugging for the piped commands that generate
@@ -68,9 +66,9 @@ jobs:
       uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: Automated URI update on ${{ github.event.inputs.branchName || 'main' }} ${{ env.date }}
+        commit-message: Automated URI Schemes update on ${{ github.event.inputs.branchName || 'main' }} ${{ env.date }}
         author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
         committer: GitHub <noreply@github.com>
-        title: Refactor FXIOS [URLExtensions] URI update on ${{ github.event.inputs.branchName || 'main' }} ${{ env.date }} for v${{ env.next_version }}
+        title: Refactor FXIOS [URLExtensions] URI Schemes update on ${{ github.event.inputs.branchName || 'main' }} ${{ env.date }} for v${{ env.next_version }}
         branch: update-uri-schemes-${{ env.date }}
-        body: This automated PR updates the URIs.
+        body: This automated PR updates URI Schemes in URLExtensions to current IANA (Permanent non-OBSOLETE) list.
