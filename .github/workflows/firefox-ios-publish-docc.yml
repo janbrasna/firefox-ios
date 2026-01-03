@@ -44,6 +44,7 @@ jobs:
             --hosting-base-path "firefox-ios" \
             --output-path docs;
           echo "<script>window.location.href += \"/documentation/componentlibrary\"</script>" > docs/index.html;
+          echo "{\"meta\":{\"title\":\"Firefox for iOS ComponentLibrary\"}}" > docs/theme-settings.json;
       - name: Store docs artifact
         uses: actions/upload-pages-artifact@v4
         with:
