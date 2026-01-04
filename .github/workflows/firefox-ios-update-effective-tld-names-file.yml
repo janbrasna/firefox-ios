@@ -1,4 +1,4 @@
-name: Create a PR if there are changes in effective_tld_names file
+name: Update eTLD list from Public Suffix data
 
 on:
   schedule:
@@ -45,13 +45,10 @@ jobs:
           echo "Files are different"
           echo "create_pr=true" >> $GITHUB_ENV
           cp tmp.dat firefox-ios/Shared/effective_tld_names.dat
-          echo "branch_name=refactor-update-effective-tld-names" >> $GITHUB_ENV
-          echo "pr_body=This automated PR updates the effective_tld_names file" >> $GITHUB_ENV
           rm tmp.dat
         fi
 
     - name: Determine PR Version Number
-      id: versioning
       run: |
         # This step is used to determine the next version number for the PR title
         # The output includes debugging for the piped commands that generate
@@ -77,5 +74,5 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "Refactor [v${{ env.next_version }}] Update effective_tld_names file ${{ env.current_date }}"
         title: "Refactor FXIOS [Top-Level Domains] Update effective_tld_names file ${{ env.current_date }} for v${{ env.next_version }}"
-        branch: ${{ env.branch_name }}
-        body: ${{ env.pr_body }}
+        body: This automated PR updates the effective_tld_names file from Public Suffix list.
+        branch: refactor-update-effective-tld-names
