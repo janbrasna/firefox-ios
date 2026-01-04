@@ -6,24 +6,24 @@ on:
       - cron: '0 12 * * SUN'
 
 jobs:
-    update_readme_with_current_stack:
+    update:
         runs-on: macos-latest
 
         steps:
             - name: Checkout code
-              uses: actions/checkout@v3    
-    
-            - name: Update README
+              uses: actions/checkout@v6
+
+            - name: Run update script
               run: |
                sh update_readme_project_stack.sh
-            
+
             - name: Check changes
               run: |
                 if [[ $(git status --porcelain) ]]; then
-                    echo "changes_detected=true" >> $GITHUB_ENV 
+                    echo "changes_detected=true" >> $GITHUB_ENV
                 fi
 
-            - name: Commit if needed 
+            - name: Commit README if changed
               if: ${{ env.changes_detected }}
               run: |
                 git config --global user.name "github-actions[bot]"
@@ -38,5 +38,6 @@ jobs:
                   author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
                   committer: GitHub <noreply@github.com>
                   title: Bump FXIOS [Documentation] Update README with recent tech stack
+                  body: This automated PR updates versions of tools used by the project in main README overview.
                   branch: update-readme-with-tech-stack
                   token: ${{ secrets.GITHUB_TOKEN }}
