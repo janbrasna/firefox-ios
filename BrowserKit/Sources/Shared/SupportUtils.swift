@@ -10,12 +10,12 @@ import UIKit
 public struct SupportUtils {
     public static var URLForPrivateBrowsingLearnMore: URL? {
         // Returns the predefined URL associated to private homepage message card learn more action.
-        return URL(string: "https://support.mozilla.org/en-US/kb/common-myths-about-private-browsing?as=u&utm_source=inproduct")
+        return URL(string: "https://support.mozilla.org/kb/common-myths-about-private-browsing?as=u&utm_source=inproduct")
     }
 
     public static var URLForWhatsNew: URL? {
         // Returns the predefined URL associated to what's new button action.
-        return URL(string: "https://www.mozilla.org/en-US/firefox/ios/notes/")
+        return URL(string: "https://www.firefox.com/en-US/firefox/ios/notes/")
     }
 
     public static var URLForGetHelp: URL? {
@@ -25,7 +25,7 @@ public struct SupportUtils {
 
     public static var URLForPocketLearnMore: URL? {
         // Returns the predefined URL associated to homepage Pocket's Learn more action.
-        return URL(string: "https://www.mozilla.org/firefox/pocket/?utm_source=ff_ios")
+        return URL(string: "https://support.mozilla.org/kb/future-of-pocket?utm_source=ff_ios")
     }
 
     public static var URLForTermsOfUse: URL? {
@@ -49,7 +49,7 @@ public struct SupportUtils {
     }
 
     public static var URLForRelayMaskLearnMoreArticle: URL? {
-        return URL(string: "https://support.mozilla.org/en-US/kb/relay-masks-ios")
+        return URL(string: "https://support.mozilla.org/kb/relay-masks-ios")
     }
 
     public static func URLForTopic(_ topic: String, useMobilePath: Bool = true) -> URL? {
