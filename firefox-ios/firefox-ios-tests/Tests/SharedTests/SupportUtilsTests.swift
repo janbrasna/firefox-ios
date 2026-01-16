@@ -17,7 +17,7 @@ class SupportUtilsTests: XCTestCase {
     }
 
     func testURLForWhatsNew() {
-        XCTAssertEqual(SupportUtils.URLForWhatsNew?.absoluteString, "https://www.mozilla.org/en-US/firefox/ios/notes/")
+        XCTAssertEqual(SupportUtils.URLForWhatsNew?.absoluteString, "https://www.firefox.com/en-US/firefox/ios/notes/")
     }
 
     func testURLForPrivacyNotice_withoutContentParam() {
