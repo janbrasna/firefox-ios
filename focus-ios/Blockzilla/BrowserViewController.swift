@@ -2090,7 +2090,7 @@ extension BrowserViewController: MenuActionable {
     }
 
     func showHelp() {
-        submit(text: "https://support.mozilla.org/en-US/products/focus-firefox/Focus-ios", source: .action)
+        submit(text: "https://support.mozilla.org/products/focus-firefox/Focus-ios", source: .action)
     }
 
     func showCopy(url: URL) {
