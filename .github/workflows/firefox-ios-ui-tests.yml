@@ -4,9 +4,9 @@ on:
     workflow_dispatch: {}
 env:
     browser: firefox-ios
-    xcode_version: 16.2
-    ios_version: 18.2
-    ios_simulator_default: iPhone 16
+    xcode_version: 26.2
+    ios_version: 26.2
+    ios_simulator_default: iPhone 17
     xcodebuild_scheme: Fennec
     xcodebuild_target: Client
     test_results_directory: /Users/runner/tmp
@@ -14,10 +14,10 @@ env:
 jobs:
     compile:
         name: Compile
-        runs-on: macos-15
+        runs-on: macos-26
         steps:
             - name: Check out source code
-              uses: actions/checkout@v4.1.7
+              uses: actions/checkout@v6
             - name: Setup Xcode
               id: xcode
               run: |
@@ -46,7 +46,7 @@ jobs:
                 tar czf derived-data.tar.gz ~/DerivedData/Build/Products
             - name: Save Derived Data
               id: upload-derived-data
-              uses: actions/upload-artifact@v4.3.4
+              uses: actions/upload-artifact@v4
               with:
                 name: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
                 path: ./derived-data.tar.gz
@@ -54,16 +54,16 @@ jobs:
 
     run-smoketests:
       name: Run smoke tests
-      runs-on: macos-14
+      runs-on: macos-26
       needs: compile
       strategy:
         fail-fast: false
         max-parallel: 1
         matrix:
-          ios_simulator: ['iPhone 16', 'iPad mini (A17 Pro)']
+          ios_simulator: ['iPhone 17', 'iPad mini (A17 Pro)']
       steps:
       - name: Check out source code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v6
       - name: Install packages
         id: packages
         run: |
@@ -170,21 +170,21 @@ jobs:
         working-directory:  ${{ env.browser }}
       - name: Upload junit files
         id: upload-junit
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.browser }}-smoketests-${{ matrix.ios_simulator }}-junit-${{ github.run_number }}
           path: ${{ env.browser }}/junit-smoketests-*.xml
           retention-days: 90
       - name: Upload log file
         id: upload-log
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.browser }}-smoketests-${{ matrix.ios_simulator }}-xcodebuildlog-${{ github.run_number }}
           path: ${{ env.browser }}/xcodebuild-smoketest*.log
           retention-days: 90
       - name: Report to Slack
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@v2
         with:
           payload-file-path: ${{ env.browser }}/slack.json
           payload-templated: true
@@ -205,16 +205,16 @@ jobs:
 
     run-fullfunctionaltests:
       name: Run full functional tests
-      runs-on: macos-14
+      runs-on: macos-26
       needs: run-smoketests
       if: false
       strategy:
         fail-fast: false
         matrix:
-          ios_simulator: ['iPhone 15 Pro Max', 'iPad Pro (12.9 inch) (6th generation)']
+          ios_simulator: ['iPhone 17 Pro Max', 'iPad Pro (12.9 inch) (6th generation)']
       steps:
         - name: Check out source code
-          uses: actions/checkout@v4.1.7
+          uses: actions/checkout@v6
         - name: Install packages
           id: packages
           run: |
@@ -254,21 +254,21 @@ jobs:
           working-directory:  ${{ env.browser }}
         - name: Upload junit files
           id: upload-junit
-          uses: actions/upload-artifact@v4.3.3
+          uses: actions/upload-artifact@v4
           with:
             name: ${{ env.browser }}-fullfunctional-${{ matrix.ios_simulator }}-junit-${{ github.run_number }}
             path: ${{ env.browser }}/junit-*.xml
             retention-days: 90
         - name: Upload log file
           id: upload-log
-          uses: actions/upload-artifact@v4.3.3
+          uses: actions/upload-artifact@v4
           with:
             name: ${{ env.browser }}-fullfunctional-${{ matrix.ios_simulator }}-xcodebuildlog-${{ github.run_number }}
             path: ${{ env.browser }}/xcodebuild.log
             retention-days: 90
         - name: Report to Slack
           id: slack
-          uses: slackapi/slack-github-action@v2.0.0
+          uses: slackapi/slack-github-action@v2
           with:
             payload-file-path: ${{ env.browser }}/slack.json
             payload-templated: true
