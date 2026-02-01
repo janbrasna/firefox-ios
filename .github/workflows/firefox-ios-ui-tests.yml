@@ -64,25 +64,21 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v6
       - name: Install packages
-        id: packages
         run: |
           gem install xcpretty -v 0.3.0
           pip install blockkit==1.9.1
           npm install -g junit-report-merger@7.0.0
       - name: Setup Xcode
-        id: xcode
         run: |
           sudo rm -rf /Applications/Xcode.app
           sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
           xcodebuild -version
           ./bootstrap.sh firefox --force
       - name: Get derived data
-        id: download-derived-data
         uses: actions/download-artifact@v4
         with:
           name: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
       - name: Decompress derived data
-        id: decompress-dd
         run: |
           tar xzf derived-data.tar.gz -C /
       - name: Run Smoketest
@@ -98,19 +94,8 @@ jobs:
             -resultBundlePath ${{ env.test_results_directory }}/results-smoketest \
             | tee xcodebuild-smoketest.log | xcpretty -r junit --output ./junit-smoketest.xml && exit ${PIPESTATUS[0]}
         working-directory:  ${{ env.browser }}
-        continue-on-error: true
-      - name: Determine pass/fail status
-        id: passfail
-        run: |
-          echo "Smoketest status: "${{ steps.run-smoketest.outcome }}
-          if [[ ${{ steps.run-smoketest.outcome }} != 'success' ]]; then
-            exit 1
-          else
-            exit 0
-          fi
-        continue-on-error: true
       - name: Print test report
-        id: test-report
+        if: always()
         run: |
           jrm combined.xml junit-*.xml
           python ../test-fixtures/ci/convert_junit_to_markdown.py --smoke --github --${{ env.browser }} ./combined.xml ./github.md
@@ -119,21 +104,21 @@ jobs:
           mv ./combined.xml "junit-smoketests-${{ matrix.ios_simulator }}-`date +"%Y-%m-%d"`.xml"
         working-directory:  ${{ env.browser }}
       - name: Upload junit files
-        id: upload-junit
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.browser }}-smoketests-${{ matrix.ios_simulator }}-junit-${{ github.run_number }}
           path: ${{ env.browser }}/junit-smoketests-*.xml
           retention-days: 90
       - name: Upload log file
-        id: upload-log
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.browser }}-smoketests-${{ matrix.ios_simulator }}-xcodebuildlog-${{ github.run_number }}
           path: ${{ env.browser }}/xcodebuild-smoketest*.log
           retention-days: 90
     #  - name: Report to Slack
-    #    id: slack
+    #    if: always()
     #    uses: slackapi/slack-github-action@v2
     #    with:
     #      payload-file-path: ${{ env.browser }}/slack.json
@@ -142,16 +127,13 @@ jobs:
     #      webhook-type: incoming-webhook
    #     env:
    #       ios_simulator: ${{ matrix.ios_simulator }}
-   #       pass_fail:  ${{ steps.passfail.outcome == 'success' && ':white_check_mark:' || ':x:' }}
+   #       pass_fail:  ${{ steps.run-smoketest.outcome == 'success' && ':white_check_mark:' || ':x:' }}
     #      xcodebuild_test_plan: Smoketests
     #      ref_name: ${{ github.ref_name }}
      #     repository: ${{ github.repository }}
       #    run_id: ${{ github.run_id }}
       #    server_url: ${{ github.server_url }}
       ##    sha: ${{ github.sha }}
-      - name: Return fail status if a test fails
-        run: |
-          exit ${{ steps.passfail.outcome == 'success' && '0' || '1' }}   
 
     run-fullfunctionaltests:
       name: Run full functional tests
@@ -161,22 +143,19 @@ jobs:
       strategy:
         fail-fast: false
         matrix:
-          ios_simulator: ['iPhone 17 Pro Max', 'iPad Pro (12.9 inch) (6th generation)']
+          ios_simulator: ['iPhone 17 Pro Max', 'iPad Pro 13-inch (M4)']
       steps:
         - name: Check out source code
           uses: actions/checkout@v6
         - name: Install packages
-          id: packages
           run: |
             gem install xcpretty -v 0.3.0
             pip install blockkit==1.9.1
         - name: Get derived data
-          id: download-derived-data
           uses: actions/download-artifact@v4
           with:
             name: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
         - name: Decompress derived data
-          id: decompress-dd
           run: |
             tar xzf derived-data.tar.gz -C /
         - name: Run tests
@@ -193,9 +172,8 @@ jobs:
               -resultBundlePath ${{ env.test_results_directory }}/results \
               | tee xcodebuild.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
           working-directory:  ${{ env.browser }}
-          continue-on-error: true
         - name: Print test report
-          id: test-report
+          if: always()
           run: |
             python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} ./build/reports/junit.xml ./github.md
             cat github.md >> $GITHUB_STEP_SUMMARY
@@ -203,21 +181,21 @@ jobs:
             mv ./build/reports/junit.xml "junit-fullfunctional-${{ matrix.ios_simulator }}-`date +"%Y-%m-%d"`.xml"
           working-directory:  ${{ env.browser }}
         - name: Upload junit files
-          id: upload-junit
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ${{ env.browser }}-fullfunctional-${{ matrix.ios_simulator }}-junit-${{ github.run_number }}
             path: ${{ env.browser }}/junit-*.xml
             retention-days: 90
         - name: Upload log file
-          id: upload-log
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ${{ env.browser }}-fullfunctional-${{ matrix.ios_simulator }}-xcodebuildlog-${{ github.run_number }}
             path: ${{ env.browser }}/xcodebuild.log
             retention-days: 90
      #   - name: Report to Slack
-     #     id: slack
+     #     if: always()
      #     uses: slackapi/slack-github-action@v2
      #     with:
      #       payload-file-path: ${{ env.browser }}/slack.json
@@ -233,6 +211,3 @@ jobs:
      #       run_id: ${{ github.run_id }}
      #       server_url: ${{ github.server_url }}
      #       sha: ${{ github.sha }}
-        - name: Return fail status if a test fails
-          run: |
-            exit ${{ steps.run-tests.outcome == 'success' && '0' || '1' }}
