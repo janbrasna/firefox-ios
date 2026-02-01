@@ -24,7 +24,6 @@ jobs:
                 sudo rm -rf /Applications/Xcode.app
                 sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
                 xcodebuild -version
-                ./bootstrap.sh focus
                 ./bootstrap.sh firefox --force
             - name: Compile source code
               id: compile
@@ -76,7 +75,6 @@ jobs:
           sudo rm -rf /Applications/Xcode.app
           sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
           xcodebuild -version
-          ./bootstrap.sh focus
           ./bootstrap.sh firefox --force
       - name: Get derived data
         id: download-derived-data
@@ -87,8 +85,8 @@ jobs:
         id: decompress-dd
         run: |
           tar xzf derived-data.tar.gz -C /
-      - name: Run Smoketest1
-        id: run-smoketest1
+      - name: Run Smoketest
+        id: run-smoketest
         run: |
           xcodebuild \
             test-without-building \
@@ -96,64 +94,16 @@ jobs:
             -target ${{ env.xcodebuild_target }} \
             -derivedDataPath ~/DerivedData \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}' \
-            -testPlan Smoketest1 \
-            -resultBundlePath ${{ env.test_results_directory }}/results-smoketest1 \
-            | tee xcodebuild-smoketest1.log | xcpretty -r junit --output ./junit-smoketest1.xml && exit ${PIPESTATUS[0]}
-        working-directory:  ${{ env.browser }}
-        continue-on-error: true
-      - name: Run Smoketest2
-        id: run-smoketest2
-        run: |
-          xcodebuild \
-            test-without-building \
-            -scheme ${{ env.xcodebuild_scheme }} \
-            -target ${{ env.xcodebuild_target }} \
-            -derivedDataPath ~/DerivedData \
-            -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}' \
-            -testPlan Smoketest2 \
-            -resultBundlePath ${{ env.test_results_directory }}/results-smoketest2 \
-            | tee xcodebuild-smoketest2.log | xcpretty -r junit --output ./junit-smoketest2.xml && exit ${PIPESTATUS[0]}
-        working-directory:  ${{ env.browser }}
-        continue-on-error: true
-      - name: Run Smoketest3
-        id: run-smoketest3
-        run: |
-          xcodebuild \
-            test-without-building \
-            -scheme ${{ env.xcodebuild_scheme }} \
-            -target ${{ env.xcodebuild_target }} \
-            -derivedDataPath ~/DerivedData \
-            -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}' \
-            -testPlan Smoketest3 \
-            -resultBundlePath ${{ env.test_results_directory }}/results-smoketest3 \
-            | tee xcodebuild-smoketest3.log | xcpretty -r junit --output ./junit-smoketest3.xml && exit ${PIPESTATUS[0]}
-        working-directory:  ${{ env.browser }}
-        continue-on-error: true
-      - name: Run Smoketest4
-        id: run-smoketest4
-        run: |
-          xcodebuild \
-            test-without-building \
-            -scheme ${{ env.xcodebuild_scheme }} \
-            -target ${{ env.xcodebuild_target }} \
-            -derivedDataPath ~/DerivedData \
-            -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}' \
-            -testPlan Smoketest4 \
-            -resultBundlePath ${{ env.test_results_directory }}/results-smoketest4 \
-            | tee xcodebuild-smoketest4.log | xcpretty -r junit --output ./junit-smoketest4.xml && exit ${PIPESTATUS[0]}
+            -testPlan Smoketest \
+            -resultBundlePath ${{ env.test_results_directory }}/results-smoketest \
+            | tee xcodebuild-smoketest.log | xcpretty -r junit --output ./junit-smoketest.xml && exit ${PIPESTATUS[0]}
         working-directory:  ${{ env.browser }}
         continue-on-error: true
       - name: Determine pass/fail status
         id: passfail
         run: |
-          echo "Smoketest1 status: "${{ steps.run-smoketest1.outcome }}
-          echo "Smoketest2 status: "${{ steps.run-smoketest2.outcome }}
-          echo "Smoketest3 status: "${{ steps.run-smoketest3.outcome }}
-          echo "Smoketest4 status: "${{ steps.run-smoketest4.outcome }}
-          if [[ ${{ steps.run-smoketest1.outcome }} != 'success' 
-                || ${{ steps.run-smoketest2.outcome }} != 'success'  
-                || ${{ steps.run-smoketest3.outcome }} != 'success' 
-                || ${{ steps.run-smoketest4.outcome }} != 'success' ]]; then
+          echo "Smoketest status: "${{ steps.run-smoketest.outcome }}
+          if [[ ${{ steps.run-smoketest.outcome }} != 'success' ]]; then
             exit 1
           else
             exit 0
@@ -206,8 +156,8 @@ jobs:
     run-fullfunctionaltests:
       name: Run full functional tests
       runs-on: macos-26
-      needs: run-smoketests
-      if: false
+    #  needs: run-smoketests
+    #  if: false
       strategy:
         fail-fast: false
         matrix:
