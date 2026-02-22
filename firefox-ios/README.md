@@ -61,8 +61,6 @@ This reduces the total possible number of User Scripts down to four. The compile
 - `MainFrameAtDocumentEnd.js`
 - `MainFrameAtDocumentStart.js`
 
-To simplify the build process, these compiled files are checked-in to this repository.
-
 To start a watcher that will compile the User Scripts on save, run the following `npm` command in the root directory of the project:
 
 ```shell
